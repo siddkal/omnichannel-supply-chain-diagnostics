@@ -1,6 +1,6 @@
 # 📦 Omni-Channel Supply Chain Diagnostics & Logistics Pipeline
 
-👉 [**View the Live Interactive Tableau Dashboard Here**](https://public.tableau.com/views/End-to-EndSupplyChainOptimizationPipeline/JITVulnerabilitymap?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+👉 [**View the Live Interactive Tableau Dashboard Here**](https://public.tableau.com/views/End-to-EndSupplyChainOptimizationPipeline/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
 
 ## 📌 Project Overview
 This project delivers an end-to-end data engineering and business intelligence solution designed to audit and optimize warehousing and multi-channel fulfillment operations. Using a dataset of **307,000+ operational records**, the pipeline ingests raw multi-channel ledger entries, performs schema standardization, executes programmatic data cleansing, and isolates critical operational metrics to flag supply chain vulnerabilities.
