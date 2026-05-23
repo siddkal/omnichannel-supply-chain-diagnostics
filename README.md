@@ -1,35 +1,58 @@
-# omnichannel-supply-chain-diagnostics
-An end-to-end data pipelines and operations analysis project optimizing a 300k+ row warehouse and retail sales distribution dataset.
+# 📦 Omni-Channel Supply Chain Diagnostics & Logistics Pipeline
+
 👉 [**View the Live Interactive Tableau Dashboard Here**](https://public.tableau.com/views/End-to-EndSupplyChainOptimizationPipeline/JITVulnerabilitymap?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
-# Omni-Channel Supply Chain Diagnostics & Logistics Optimization
 
-An operational optimization project acting as a Data/BI Analyst for a regional multi-channel distributor. This project builds an automated ETL data pipeline to process and analyze a 300,000+ row supply chain ledger tracking B2B Wholesale (`WAREHOUSE SALES`), B2C `RETAIL SALES`, and store replenishment (`RETAIL TRANSFERS`).
+## 📌 Project Overview
+This project delivers an end-to-end data engineering and business intelligence solution designed to audit and optimize warehousing and multi-channel fulfillment operations. Using a dataset of **307,000+ operational records**, the pipeline ingests raw multi-channel ledger entries, performs schema standardization, executes programmatic data cleansing, and isolates critical operational metrics to flag supply chain vulnerabilities.
 
----
-
-## 🛠️ Project Architecture & Tech Stack
-* **Language:** Python 3.x (Pandas, NumPy)
-* **Visualizations:** Tableau Public
-* **IE Frameworks:** Pareto Principle (80/20 Rule), Just-In-Time (JIT) Supply Chain Constraints, Reverse Logistics Waste Isolation.
+The downstream analysis surfaces systematic bottlenecks, structural dependencies, and operational inefficiencies, translating raw transactional data into high-impact boardroom insights.
 
 ---
 
-## 📋 Key Operations Insights & Engineering Analysis
+## 📈 Strategic Business Insights
 
-### 1. High-Velocity Just-In-Time (JIT) Replenishment Risk
-* **Insight:** Calculating the ratio of `Retail Transfers` relative to active `Retail Sales` across core product segments (Wine, Beer, Liquor) reveals a tight operational distribution factor of **0.98 to 0.99**. 
-* **Operational Impact:** This confirms an aggressive cross-docking or tight JIT replenishment framework. While this minimizes warehouse inventory holding costs, retail storefronts operate without a safety stock buffer, rendering the retail channel exceptionally vulnerable to upstream logistics or carrier delays.
+### 1. Just-In-Time (JIT) Supply Chain Vulnerability
+* **Metric Discovered:** $\text{Replenishment Factor} = \frac{\sum \text{Retail Transfers}}{\sum \text{Retail Sales}} = 0.9875$
+* **Operational Risk:** Retail storefronts carry a razor-thin safety inventory margin of less than $1.3\%$. Retail transfers (replenishment) tightly trace active consumer demand with zero buffer room. A transit or fulfillment delay exceeding 48 hours results in immediate store-wide stockouts.
 
-### 2. Supplier Concentration & Systemic Vulnerability
-* **Insight:** Applying the Pareto Principle to the wholesale distribution matrix reveals immense supplier network concentration. Three strategic entities (*Crown Imports, Miller Brewing Company, and Anheuser Busch*) command over **65%** of total outgoing warehouse freight volume.
-* **Operational Impact:** Strategic procurement diversification is recommended to buffer the distributor's B2B ecosystem from localized labor actions, supply constraints, or factory-level logistics disruptions.
+### 2. Supplier Concentration Risk (The 80/20 Bottleneck)
+* **Metric Discovered:** Three primary distribution networks dominate the entire logistical footprint.
+* **Top 3 Volumetric Footprints:**
+  1. **Crown Imports:** $1,651,871.51$ units
+  2. **Miller Brewing Company:** $1,425,448.21$ units
+  3. **Anheuser Busch Inc:** $1,399,261.25$ units
+* **Operational Risk:** High systemic exposure. Any labor strikes, material shortages, or freight challenges within these three specific supplier networks could halt more than half of the company's total product throughput.
 
-### 3. Data Cleansing & Reverse Logistics Segmentation 
-* **Insight:** Isolated significant negative vectors buried inside `WAREHOUSE SALES`—specifically impacting logistical support assets like `DUNNAGE` (protective material) and `REF` (refrigerated storage containers). 
-* **Data Fix:** Created an automated Python pipeline to cleanly segment forward-moving commercial revenue from absolute reverse logistics return loops, preventing downstream forecasting distortion.
+### 3. Reverse Logistics & Waste Volume Segmentation
+* **Metric Discovered:** Isolated reverse logistics loops from forward distribution channels.
+  * **Forward Logistics (Active Sales):** $7,925,508.87$ units ($98.2\%$)
+  * **Reverse Logistics (Returns / Waste Material):** $143,752.59$ units ($1.8\%$)
+* **Operational Insight:** While $1.8\%$ seems small, it represents over $143,000$ physical items moving backward through the warehouse network annually, directly consuming labor, storage capacity, and freight costs without generating forward revenue.
 
 ---
 
-## 📂 Repository Structure
-* `data/`: Placeholder directory for raw supply chain CSV inputs.
-* `scripts/data_cleaning.py`: Production-grade Python script handling structural schema reinforcement, missing variable imputation, datetime reconstruction, and data integrity checks.
+## 🛠️ Data Pipeline Architecture (ETL)
+
+The core data pipeline was engineered using **Python, Pandas, and NumPy** to automate data cleansing and state reconstruction. The pipeline processes data through six distinct phases:
+
+1. **Ingestion & Parsing:** Dynamically loads multi-channel ledgers from a local environment.
+2. **Schema Standardization:** Strips whitespace and forces a strict uppercase layout across all transactional columns to eliminate duplicate categories caused by manual entry.
+3. **Null-Value Rectification:** Implements robust fallbacks (`UNKNOWN SUPPLIER`, `UNKNOWN TYPE`) and zeroes out missing numeric metrics to preserve ledger structural integrity.
+4. **Feature Engineering (Reverse Logistics Isolation):** Employs mathematical conditions to isolate reverse freight metrics:
+   * Categorizes transactions into `FORWARD_LOGISTICS` or `REVERSE_LOGISTICS`.
+   * Maps negative warehouse volumes directly into a absolute-value metric (`RETURNS_VOLUME`).
+5. **Temporal Reconstruction:** Builds a synchronized, clean `DATE` timestamp metric by joining independent `YEAR` and `MONTH` values to allow continuous line-chart mapping over time.
+6. **Deduplication & Target Export:** Drops duplicate records to prevent skewed distributions and exports the clean file as `processed_supply_chain_data.csv`.
+
+### Core Pipeline Snippet
+```python
+import pandas as pd
+import numpy as np
+
+# Feature Engineering: Isolating Reverse Logistics
+df['TRANSACTION_TYPE'] = np.where(df['WAREHOUSE SALES'] >= 0, 'FORWARD_LOGISTICS', 'REVERSE_LOGISTICS')
+df['RETURNS_VOLUME'] = np.where(df['WAREHOUSE SALES'] < 0, abs(df['WAREHOUSE SALES']), 0.0)
+df['NET_WAREHOUSE_SALES'] = np.where(df['WAREHOUSE SALES'] > 0, df['WAREHOUSE SALES'], 0.0)
+
+# Temporal Reconstruction
+df['DATE'] = pd.to_datetime(df['YEAR'].astype(str) + '-' + df['MONTH'].astype(str) + '-01')
