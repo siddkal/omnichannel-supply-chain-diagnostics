@@ -1,5 +1,6 @@
 # omnichannel-supply-chain-diagnostics
 An end-to-end data pipelines and operations analysis project optimizing a 300k+ row warehouse and retail sales distribution dataset.
+👉 [**View the Live Interactive Tableau Dashboard Here**](https://public.tableau.com/views/End-to-EndSupplyChainOptimizationPipeline/JITVulnerabilitymap?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
 # Omni-Channel Supply Chain Diagnostics & Logistics Optimization
 
 An operational optimization project acting as a Data/BI Analyst for a regional multi-channel distributor. This project builds an automated ETL data pipeline to process and analyze a 300,000+ row supply chain ledger tracking B2B Wholesale (`WAREHOUSE SALES`), B2C `RETAIL SALES`, and store replenishment (`RETAIL TRANSFERS`).
