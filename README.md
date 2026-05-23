@@ -9,7 +9,7 @@ An operational optimization project acting as a Data/BI Analyst for a regional m
 
 ## 🛠️ Project Architecture & Tech Stack
 * **Language:** Python 3.x (Pandas, NumPy)
-* **Visualizations:** Tableau Public / PowerBI (Planned / In Progress)
+* **Visualizations:** Tableau Public
 * **IE Frameworks:** Pareto Principle (80/20 Rule), Just-In-Time (JIT) Supply Chain Constraints, Reverse Logistics Waste Isolation.
 
 ---
