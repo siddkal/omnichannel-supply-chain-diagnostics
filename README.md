@@ -1,4 +1,4 @@
-# End-to-End Supply Chain Optimization Pipeline (Interactive Tableau Dashboard)
+# End-to-End Supply Chain Optimization Pipeline
 
 📊 **[View the Live Interactive Dashboard on Tableau Public](https://public.tableau.com/views/End-to-EndSupplyChainOptimizationPipeline/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)**
 
