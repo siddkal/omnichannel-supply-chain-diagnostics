@@ -8,41 +8,36 @@ def run_supply_chain_pipeline(file_path):
     try:
         df = pd.read_csv(file_path)
     except FileNotFoundError:
-        # Fallback path if run locally or in different folder structures
         df = pd.read_csv('Warehouse_and_Retail_Sales.csv')
         
-    # 2. Standardize Schema (Clean column spaces and make uppercase)
+    # 2. Standardize Schema
     df.columns = df.columns.str.strip().str.upper()
     
-    # 3. Handle Missing Values (Impute categorical nulls to prevent loss of volume records)
+    # 3. Handle Missing Values
     df['SUPPLIER'] = df['SUPPLIER'].fillna('UNKNOWN SUPPLIER').str.strip()
     df['ITEM TYPE'] = df['ITEM TYPE'].fillna('UNKNOWN TYPE').str.strip()
     
-    # Fill numerical sales nulls with zero
     df['RETAIL SALES'] = df['RETAIL SALES'].fillna(0.0)
     df['RETAIL TRANSFERS'] = df['RETAIL TRANSFERS'].fillna(0.0)
     df['WAREHOUSE SALES'] = df['WAREHOUSE SALES'].fillna(0.0)
     
     # 4. Feature Engineering: Reverse Logistics Isolation
-    # Tagging and isolating negative warehouse numbers (Returns/Dunnage)
     df['TRANSACTION_TYPE'] = np.where(df['WAREHOUSE SALES'] >= 0, 'FORWARD_LOGISTICS', 'REVERSE_LOGISTICS')
     df['RETURNS_VOLUME'] = np.where(df['WAREHOUSE SALES'] < 0, abs(df['WAREHOUSE SALES']), 0.0)
     df['NET_WAREHOUSE_SALES'] = np.where(df['WAREHOUSE SALES'] > 0, df['WAREHOUSE SALES'], 0.0)
     
-    # 5. Temporal Reconstruction (Synthesize clean dates for visualization tools)
+    # 5. Temporal Reconstruction
     df['DATE'] = pd.to_datetime(df['YEAR'].astype(str) + '-' + df['MONTH'].astype(str) + '-01')
     
-    # 6. Data Integrity Check: Drop strict duplicates
+    # 6. Data Integrity Check
     df = df.drop_duplicates()
     
-    # 7. Output operational data metrics to log
     print(f"✅ Data processing complete. Cleaned shape: {df.shape}")
     
-    # Export cleaned file for Tableau/PowerBI consumption
+    # Export cleaned file
     output_path = 'processed_supply_chain_data.csv'
     df.to_csv(output_path, index=False)
     print(f"📦 Processed file exported successfully to: {output_path}")
 
 if __name__ == "__main__":
-    # Pointing towards the adjacent data folder path mapping
     run_supply_chain_pipeline('../data/Warehouse_and_Retail_Sales.csv')
